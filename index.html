@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crypto Price Alert System</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input,
+      select,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      button {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #218838;
+      }
+      .prices {
+        margin-top: 20px;
+      }
+      .price-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      
+      
+      <h1>Crypto Price Alert System</h1>
+
+      <form id="alertForm">
+        <label for="email">Email</label>
+        <input type="email" id="email" required />
+        <label for="symbol">Cryptocurrency Symbol</label>
+        <input type="text" id="symbol" required />
+        <label for="targetPrice">Target Price</label>
+        <input type="number" id="targetPrice" required />
+        <label for="direction">Direction</label>
+        <select id="direction" required>
+          <option value="above">Above</option>
+          <option value="below">Below</option>
+        </select>
+        <button type="submit">Set Alert</button>
+      </form>
+      <div class="prices">
+        <h2>Current Prices</h2>
+        <div id="pricesList"></div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+   
+  </body>
+  <script>
+    const alertForm = document.getElementById("alertForm")
+    const pricesList = document.getElementById("pricesList")
+   
+    
+    alertForm.addEventListener("submit", async (event) => {
+      event.preventDefault()
+      const email = document.getElementById("email").value
+      const symbol = document.getElementById("symbol").value
+      const targetPrice = document.getElementById("targetPrice").value
+      const direction = document.getElementById("direction").value
+    
+      try {
+        await axios.post("http://localhost:3000/alerts", {
+          email,
+          symbol,
+          targetPrice,
+          direction,
+        })
+        alert("Alert created successfully!")
+      } catch (error) {
+        console.error("Error creating alert:", error)
+        alert("Failed to create alert.")
+      }
+    })
+    
+    async function fetchPrices() {
+      try {
+        const response = await axios.get("http://localhost:3000/prices")
+        const prices = response.data
+        pricesList.innerHTML = ""
+    
+        for (const [symbol, price] of Object.entries(prices)) {
+          const priceItem = document.createElement("div")
+          priceItem.classList.add("price-item")
+          priceItem.innerHTML = `<strong>${symbol.toUpperCase()}</strong><span>Rs.${price}</span>`
+          pricesList.appendChild(priceItem)
+          console.log("done")
+        }
+      } catch (error) {
+        console.error("Error fetching prices:", error)
+      }
+    }
+    
+    async function sendalerts() {
+      const status = await axios.get("http://localhost:3000/alertSentstat")
+      const alertdata = status.data
+      console.log(alertdata)
+      for (i of alertdata.data) {
+        alert(
+          `alert recieved for ${i.symbol}.the price is ${i.direction} ${i.targetPrice}`
+        )
+      }
+    }
+   
+    
+    // Fetch prices and alerts every 1 second
+    setInterval(fetchPrices, 1000)
+    setInterval(sendalerts, 1000)
+    // Initial fetch
+    fetchPrices()
+    </script>
+</html>
