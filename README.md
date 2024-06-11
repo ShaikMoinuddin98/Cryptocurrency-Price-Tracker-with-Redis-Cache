@@ -1,19 +1,21 @@
 # Crypto Price Alert System
 
-This web application monitors cryptocurrency prices and sends alerts when a specified price condition is met. It uses Node.js, Express, MongoDB, Redis, and Axios to manage real-time cryptocurrency prices and user alerts.
+This web application monitors cryptocurrency prices and sends alerts when a specified price condition is met. It uses Node.js, Express, MongoDB, Redis, Cron Jobs and Axios to manage real-time cryptocurrency prices and user alerts.
 
 ## Features
 
 - Set price alerts for specific cryptocurrencies.
 - Receive notifications when the cryptocurrency price crosses the specified threshold.
-- Real-time updates of cryptocurrency prices.
+- Real-time updates of cryptocurrency prices using Cron Jobs.
 - Uses Redis for caching prices and MongoDB for storing user alert data.
 
-## Requirements
+## Tech Stack
 
 - Node.js
 - MongoDB
 - Redis
+- CoinGecko API
+- Cron Jobs
 
 ## Usage
 
